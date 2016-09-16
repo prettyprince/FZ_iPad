@@ -1,0 +1,55 @@
+//
+//  PrefixHeader.pch
+//  FZ_iPad
+//
+//  Created by Jeemy on 16/9/9.
+//  Copyright © 2016年 Jeemy. All rights reserved.
+//
+
+#ifndef PrefixHeader_pch
+#define PrefixHeader_pch
+
+
+#import <Foundation/Foundation.h>
+#import <CoreFoundation/CoreFoundation.h>
+#import "UIImageView+WebCache.h"
+#import "JSExtension.h"
+#import "AFNetworking.h"
+#import "KVNProgress.h"
+#import "UIView+Extension.h"
+#import "UIImage+WebP.h"
+// RGB颜色
+#define JSColor(r, g, b) [UIColor colorWithRed:(r)/255.0 green:(g)/255.0 blue:(b)/255.0 alpha:1.0]
+//IOS7以上版本
+#define IOS7 ([[UIDevice currentDevice].systemVersion doubleValue] >= 7.0)
+// 随机色
+#define JSRandomColor JSColor(arc4random_uniform(256), arc4random_uniform(256), arc4random_uniform(256))
+//当前屏幕的bounds
+#define   UIScreenSize  [[UIScreen mainScreen]bounds].size
+#define SCREEN_WIDTH                    ([UIScreen mainScreen].bounds.size.width)
+#define SCREEN_HEIGHT                   ([UIScreen mainScreen].bounds.size.height)
+#define ScreenContentHeight (SCREEN_HEIGHT-49-44-20)
+//#define  font(a) [UIFont systemFontOfSize:a]
+#define  font(a) iPhone5 ?[UIFont systemFontOfSize:a] : iPhone6 ? [UIFont systemFontOfSize:a] : iPhone6plus ? [UIFont systemFontOfSize:a + 3] : [UIFont systemFontOfSize:a + 5]
+#define JSNotificationCenter [NSNotificationCenter defaultCenter]
+#define maxX(frame) CGRectGetMaxX(frame)
+#define maxY(frame) CGRectGetMaxY(frame)
+
+
+
+
+
+#endif /* PrefixHeader_pch */
+
+
+
+#ifdef DEBUG // 处于开发阶段
+#define JSLog(...) NSLog(@"方法:%s|第%d行 \n|—————————————————————————————————————————————————————————%@\n\n",__func__,__LINE__,[NSString stringWithFormat:__VA_ARGS__])//__va__args__可变参数不需要％@
+//#define JSLog(...) NSLog(__VA_ARGS__)
+#else // 处于发布阶段
+#define JSLog(...)
+#endif /* SFKteacherPchfile_pch */
+
+//
+//NSString *plistPath_2 = [[NSBundle mainBundle] pathForResource:@"WYSProperties" ofType:@"plist"];
+//NSDictionary *urlDic = [[NSMutableDictionary alloc] initWithContentsOfFile:plistPath_2];
