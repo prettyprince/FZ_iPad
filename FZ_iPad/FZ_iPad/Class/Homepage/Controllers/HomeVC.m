@@ -8,14 +8,33 @@
 
 #import "HomeVC.h"
 #import <CoreLocation/CoreLocation.h>
-@interface HomeVC ()<CLLocationManagerDelegate>
+#import "HomepageCell.h"
+#import "CoHomeReuseView.h"
+#import "CityChoiceView.h"
+#import "HomeShareData.h"
+
+@interface HomeVC ()<CLLocationManagerDelegate,UIGestureRecognizerDelegate>
 @property (nonatomic ,strong)CLLocationManager *locationManager;
 @property (nonatomic ,strong)CityListView *cityListV;
 @property (nonatomic ,strong)MenuView *menuView;
 @property (nonatomic ,strong)HousesStyleVC *hourseStyleVC;
+@property (nonatomic ,strong)NSMutableArray *imgsArray;
 @end
 
 @implementation HomeVC
+
+/**
+ *懒加载
+ */
+-(NSMutableArray *)imgsArray{
+    if (_imgsArray==nil) {
+        _imgsArray=[[NSMutableArray alloc]init];
+        for(int i=0;i<5;i++){
+            [_imgsArray addObject:[NSString stringWithFormat:@"curtainbig%d",i+1]];
+        }
+    }
+    return _imgsArray;
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -25,8 +44,8 @@
     //增加通知中心
     [JSNotificationCenter addObserver:self selector:@selector(cityChoice:) name:@"CityChoice" object:nil];
     //设置下拉菜单
-//    [self setupMenu];
-    [self setupNewMenu];
+    [self setupMenu];
+//    [self setupNewMenu];
     
     
     //设置collectionController
@@ -63,7 +82,7 @@
     JSLog(@"您选择的城市是:%@",city);
     
     self.cityListV = [[CityListView alloc]init];
-        [self.cityListV removeFromSuperview];
+    [self.cityListV removeFromSuperview];
   
     [JSNotificationCenter postNotificationName:@"CityChoice" object:city];
     
@@ -87,11 +106,13 @@
     self.collectionView=[[UICollectionView alloc] initWithFrame:CGRectMake(0, 64, UIScreenSize.width, UIScreenSize.height-64) collectionViewLayout:flowLayout];
     self.collectionView.dataSource=self;
     self.collectionView.delegate=self;
-    [self.collectionView setBackgroundColor:[UIColor clearColor]];
+    [self.collectionView setBackgroundColor:[UIColor whiteColor]];
+    
     
     //注册Cell，必须要有
-    [self.collectionView registerClass:[UICollectionViewCell class] forCellWithReuseIdentifier:@"UICollectionViewCell"];
-    
+    [self.collectionView registerClass:[HomepageCell class] forCellWithReuseIdentifier:@"Cell"];
+    //注册view
+    [self.collectionView registerClass:[CoHomeReuseView class] forSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:@"Header"];
     [self.view addSubview:self.collectionView];
 }
 
@@ -117,17 +138,28 @@
     
     if (self.navigationItem) {
         CGRect frame = CGRectMake(0.0, 0.0, 200.0, self.navigationController.navigationBar.bounds.size.height);
-        SINavigationMenuView *menu = [[SINavigationMenuView alloc] initWithFrame:frame title:@"重庆"];
-        menu.userInteractionEnabled=YES;
-        [menu displayMenuInView:self.view];
-        menu.items = @[@"重庆", @"杭州", @"宁波", @"上海", @"南宁"];
-        menu.delegate = self;
-        self.navigationItem.titleView = menu;
+//        SINavigationMenuView *menu = [[SINavigationMenuView alloc] initWithFrame:frame title:@"重庆"];
+//        menu.userInteractionEnabled=YES;
+//        [menu displayMenuInView:self.view];
+//        menu.items = @[@"重庆", @"杭州", @"宁波", @"上海", @"南宁"];
+//        menu.delegate = self;
+//        self.navigationItem.titleView = menu;
+        UIView *titleV=[[UIView alloc]initWithFrame:frame];
+        UIButton *btn=[[UIButton alloc]initWithFrame:CGRectMake(0, 0, titleV.width, titleV.height)];
+        [btn setTitle:@"点我" forState:UIControlStateNormal];
+        [btn addTarget:self action:@selector(clickBtn:) forControlEvents:UIControlEventTouchUpInside ];
+        titleV.backgroundColor=[UIColor redColor];
+        [titleV addSubview:btn];
+        
+        self.navigationItem.titleView=titleV;
+       
     }
 }
-
-
-
+-(void)clickBtn:(UIButton *)btn{
+    CityChoiceView *view=[[CityChoiceView alloc]initWithFrame:CGRectMake(UIScreenSize.width-400, 50, 400, UIScreenSize.height-300)];
+    //UIWindow *window=[[UIApplication sharedApplication].windows lastObject];
+    [view displayView:btn];
+}
 
 /**
  *城市定位
@@ -231,10 +263,6 @@
 
 
 
-
-
-
-
 /**
  *collection的协议和代理
  */
@@ -243,7 +271,7 @@
 //定义展示的UICollectionViewCell的个数
 -(NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
 {
-    return 20;
+    return self.imgsArray.count;
 }
 
 //定义展示的Section的个数
@@ -255,25 +283,32 @@
 //每个UICollectionView展示的内容
 -(UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    static NSString * CellIdentifier = @"UICollectionViewCell";
-    UICollectionViewCell * cell = [collectionView dequeueReusableCellWithReuseIdentifier:CellIdentifier forIndexPath:indexPath];
-    
-    cell.backgroundColor = [UIColor colorWithRed:((10 * indexPath.row) / 255.0) green:((20 * indexPath.row)/255.0) blue:((30 * indexPath.row)/255.0) alpha:1.0f];
-    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 20, 20)];
-    label.textColor = [UIColor redColor];
-    label.text = [NSString stringWithFormat:@"%ld",indexPath.row];
-    
-    for (id subView in cell.contentView.subviews) {
-        [subView removeFromSuperview];
-    }
-    [cell.contentView addSubview:label];
+     JSLog(@"imgs=%@,row=%ld,item=%ld",self.imgsArray[indexPath.item],indexPath.row,indexPath.item);
+    static NSString * CellIdentifier = @"Cell";
+     HomepageCell* cell = [collectionView dequeueReusableCellWithReuseIdentifier:CellIdentifier forIndexPath:indexPath];
+   
+     cell.imgStr=self.imgsArray[indexPath.item];
+    cell.imageView.image= [UIImage imageNamed:self.imgsArray[indexPath.row]];
+    self.homeModelData.array=self.imgsArray;
+    cell.homeModelData=nil;
     return cell;
 }
 
+-(UICollectionReusableView *)collectionView:(UICollectionView *)collectionView viewForSupplementaryElementOfKind:(NSString *)kind atIndexPath:(NSIndexPath *)indexPath{
+    UICollectionReusableView *reView=nil;
+    if(kind == UICollectionElementKindSectionHeader){
+        CoHomeReuseView *view=[collectionView dequeueReusableSupplementaryViewOfKind:UICollectionElementKindSectionHeader withReuseIdentifier:@"Header" forIndexPath:indexPath];
+        view.title.text = [[NSString alloc] initWithFormat:@"头部视图%ld",indexPath.section];
+        reView=view;
+    }
+    return reView;
+    
+}
 #pragma mark --UICollectionViewDelegateFlowLayout
 
 //定义每个Item 的大小
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
+
 {
     
     CGFloat screenW=UIScreenSize.width;
@@ -298,9 +333,9 @@
     UICollectionViewCell * cell = (UICollectionViewCell *)[collectionView cellForItemAtIndexPath:indexPath];
     //临时改变个颜色，看好，只是临时改变的。如果要永久改变，可以先改数据源，然后在cellForItemAtIndexPath中控制。（和UITableView差不多吧！O(∩_∩)O~）
     cell.backgroundColor = [UIColor greenColor];
-//    NSLog(@"item======%ld",indexPath.item);
-//    NSLog(@"row=======%ld",indexPath.row);
-//    NSLog(@"section===%ld",indexPath.section);
+    NSLog(@"item======%ld",indexPath.item);
+    NSLog(@"row=======%ld",indexPath.row);
+    NSLog(@"section===%ld",indexPath.section);
     self.hourseStyleVC=[[HousesStyleVC alloc]init];
     self.hourseStyleVC.hoursesName= @"北京和重庆";
     [self.navigationController pushViewController:self.hourseStyleVC animated:NO];

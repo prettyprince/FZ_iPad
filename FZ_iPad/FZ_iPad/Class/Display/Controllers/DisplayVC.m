@@ -189,7 +189,7 @@
                 for (int i=0;i<self.layerMuArray.count;i++) {
                     
                     if ([self.layerMuArray[i] containsString:curtainStr]) {
-                                                //因为涉及不同种类切换时名字肯定不一样,所以要再判断是否里面包含一样的类型的，不然不会消息
+                                                //因为涉及不同种类切换时名字肯定不一样,所以要再判断是否里d面包含一样的类型的，不然不会消息
                         if ([self.layerMuArray[i] containsString:strName]) {
                             //删除之前那个 因为点到重复的了
                             [self.layerMuArray removeObjectAtIndex:i];
@@ -430,8 +430,7 @@
  *初始化当前页面
  */
 -(void)setInit{
-//    NSUUID *uuid =[UIDevice currentDevice].identifierForVendor;
-//    JSLog(@"uuid=%@",uuid.UUIDString);
+
     //低层图片
     self.bgImgView = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, UIScreenSize.width, UIScreenSize.height)];
     [self.bgImgView setBackgroundColor:[UIColor purpleColor]];

@@ -12,11 +12,14 @@
 #import "MenuView.h"
 #import "CityListView.h"
 #import "HousesStyleVC.h"
+#import "HomeModelData.h"
 
 
 @interface HomeVC : UIViewController<UICollectionViewDataSource,UICollectionViewDelegateFlowLayout,UICollectionViewDelegate,SINavigationMenuDelegate,MenuViewDelegate,CityListViewDelegate>
 
 @property (strong, nonatomic)UICollectionView *collectionView;
+
+@property (nonatomic ,strong)HomeModelData *homeModelData;
 
 @end
 

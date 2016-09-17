@@ -8,9 +8,8 @@
 
 #import "AppDelegate.h"
 #import "HomeVC.h"
-
+#import "LoginVC.h"
 @interface AppDelegate ()
-
 @end
 
 @implementation AppDelegate
@@ -21,16 +20,14 @@
     
     //1.创建窗口
     self.window=[[UIWindow alloc]init];
-    self.window.frame=[UIScreen mainScreen].bounds;
-    
-    //2.设置根控制器'(先判断此设备是否曾经登陆过，是直接跳转到主界面)
-    UINavigationController *homeNav=[[UINavigationController alloc]init];
-    self.window.rootViewController=homeNav;
-    [homeNav addChildViewController:[[HomeVC alloc]init]];
+//    2.设置根控制器'(先判断此设备是否曾经登陆过，是直接跳转到主界面)
+//    UINavigationController *homeNav=[[UINavigationController alloc]init];
+//    self.window.rootViewController=homeNav;
+//    [homeNav addChildViewController:[[HomeVC alloc]init]];
+    self.window.rootViewController=[[LoginVC alloc]init];
     
     //3.显示窗口
     [self.window makeKeyAndVisible];
-
     
     
     

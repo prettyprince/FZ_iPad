@@ -7,9 +7,13 @@
 //
 
 #import <UIKit/UIKit.h>
-
+#import "HomeModelData.h"
 @interface HomepageCell : UICollectionViewCell
 
+@property (nonatomic ,strong)HomeModelData *homeModelData;
 
-+ (instancetype)cellWithCollectionView:(UICollectionView *)collectionView;
+@property (nonatomic ,copy)NSString *imgStr;
+@property(strong,nonatomic) UIImageView *imageView;
+@property (nonatomic ,strong)NSMutableArray *mutableArray;
+@property (nonatomic ,strong)UILabel *titleLbl;
 @end
